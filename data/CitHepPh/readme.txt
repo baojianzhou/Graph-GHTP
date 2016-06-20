@@ -1,0 +1,1 @@
+For CitHepPh data, we find the maximal connected component as our input graph
