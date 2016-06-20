@@ -6,21 +6,32 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.4</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.6</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.ujmp</groupId>
 			<artifactId>ujmp-colt</artifactId>
 			<version>0.3.0</version>
 		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<properties>

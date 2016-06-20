@@ -3,9 +3,9 @@ package edu.albany.cs.graphGHTP;
 import edu.albany.cs.base.ConnectedComponents;
 import edu.albany.cs.base.PreRec;
 import edu.albany.cs.base.Utils;
-import edu.albany.cs.headApprox.PCSFHead;
+import edu.albany.cs.headApprox.HeadApprox;
 import edu.albany.cs.scoreFuncs.Function;
-import edu.albany.cs.tailApprox.PCSFTail;
+import edu.albany.cs.tailApprox.TailApprox;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.stat.StatUtils;
@@ -165,7 +165,7 @@ public class GraphGHTP {
 			gradientFxi = normalizeGradient(xi.toArray(), gradientFxi);
 			/** head approximation */
 			long startTimeHead = System.nanoTime();
-			PCSFHead pcsfHead = new PCSFHead(edges, edgeCosts, gradientFxi, s, g, B, trueSubGraph);
+			HeadApprox pcsfHead = new HeadApprox(edges, edgeCosts, gradientFxi, s, g, B, trueSubGraph);
 			if (verboseLevel > 0) {
 				System.out.println("Head runningTime: " + (System.nanoTime() - startTimeHead) / 1e9);
 				System.out.println();
@@ -197,7 +197,7 @@ public class GraphGHTP {
 			double[] b = function.getArgMaxFx(S);
 			/** tail approximation */
 			long startTimeTail = System.nanoTime();
-			PCSFTail pcsfTail = new PCSFTail(edges, edgeCosts, b, s, g, B, trueSubGraph);
+			TailApprox pcsfTail = new TailApprox(edges, edgeCosts, b, s, g, B, trueSubGraph);
 			xi = projectVector(b, pcsfTail.bestForest.nodesInF);
 			resultNodesTail = new HashSet<>(pcsfTail.bestForest.nodesInF);
 			double updatedFuncValue = getFuncTailVal(resultNodesTail);

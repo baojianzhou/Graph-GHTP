@@ -76,5 +76,19 @@ public final class Utils {
 		}
 		return result;
 	}
+	
+	public static void error(String errorInfo, int exitStatus){
+		System.out.println("Error Info: " + errorInfo);
+		System.exit(exitStatus);
+	}
+	
+	public static void error(int exitStatus, String... errorInfos){
+		System.out.println("-----------error info ----------------");
+		for(String errorInfo : errorInfos){
+			System.out.println(errorInfo);	
+		}
+		System.out.println("-----------error info ----------------");
+		System.exit(exitStatus);
+	}
 
 }

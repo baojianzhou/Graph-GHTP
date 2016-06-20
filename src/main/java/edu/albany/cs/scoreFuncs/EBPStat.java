@@ -12,6 +12,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * 
+ * please see the following paper :
+ * http://www.cs.cmu.edu/~./neill/papers/jrssb2012.pdf Fast subset scan for
+ * spatial pattern detection The function F(S) is Poisson statistic in table 1
+ * 
+ * @author baojian bzhou6@albany.edu
+ *
+ */
 public class EBPStat implements Function {
 
 	private final double[] b;
@@ -21,12 +30,17 @@ public class EBPStat implements Function {
 
 	private final FuncType funcID;
 
+	/**
+	 * @param b
+	 *            base
+	 * @param c
+	 *            data (e.g. counts)
+	 */
 	public EBPStat(double[] b, double[] c) {
 
 		this.funcID = FuncType.EBP;
 		if (!checkInput(b, c)) {
-			System.out.println(funcID + " input parameter is invalid.");
-			System.exit(0);
+			Utils.error(funcID + " input parameter is invalid.", 0);
 		}
 		this.b = b;
 		this.c = c;
@@ -41,9 +55,9 @@ public class EBPStat implements Function {
 	 */
 	private boolean checkInput(double[] b, double[] c) {
 
-		if(verboseLevel > 0 ){
-			System.out.println("BAll: "+StatUtils.sum(b));
-			System.out.println("CAll: "+StatUtils.sum(c));
+		if (verboseLevel > 0) {
+			System.out.println("BAll: " + StatUtils.sum(b));
+			System.out.println("CAll: " + StatUtils.sum(c));
 		}
 		if (b == null || c == null || b.length == 0 || c.length == 0) {
 			return false;
@@ -64,10 +78,7 @@ public class EBPStat implements Function {
 	}
 
 	/**
-	 * please see the following paper :
-	 * http://www.cs.cmu.edu/~./neill/papers/jrssb2012.pdf Fast subset scan for
-	 * spatial pattern detection The function F(S) is Poisson statistic in table
-	 * 1
+	 * 
 	 */
 	@Override
 	public double[] getGradient(double[] x) {
@@ -83,20 +94,16 @@ public class EBPStat implements Function {
 			System.out.println("B is : " + B + " ; C is : " + C);
 		}
 		if (B <= 0.0D || C <= 0.0D) {
-			System.out.println("Poission Gradient Error : B or C is non-positive value ...");
-			System.out.println("B is: " + B + " C is: " + C);
-			System.exit(0);
+			Utils.error("EBP Error : B or C is non-positive value ...\n" + "B is: " + B + " C is: " + C, 0);
 		}
 		if (C > B) {
 			for (int i = 0; i < n; i++) {
 				gradient[i] = c[i] * Math.log(C / B) + b[i] * (1 - C / B);
 				if (!Double.isFinite(gradient[i])) {
-					System.out.println("gradient error ...");
-					System.exit(0);
+					Utils.error("EBP gradient error ...", 0);
 				}
 			}
 		} else {
-			/** TODO check if this is right */
 			Arrays.fill(gradient, 0.0D);
 		}
 		return gradient;
@@ -110,7 +117,7 @@ public class EBPStat implements Function {
 	 */
 	@Override
 	public double getFuncValue(double[] x) {
-		
+
 		checkIndictorVect(x);
 		double B = new ArrayRealVector(x).dotProduct(new ArrayRealVector(b));
 		double C = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
@@ -119,31 +126,26 @@ public class EBPStat implements Function {
 		if (C > B) {
 			f = C * Math.log(C / B) + B - C;
 			if (!Double.isFinite(f)) {
-				System.out.println("EBP stat getFuncValue error. it is not finite. ");
-				System.out.println("B: "+B+" C: "+C);
-				System.exit(0);
+				Utils.error("EBP stat getFuncValue error. it is not finite.\n" + "B: " + B + " C: " + C, 0);
 			}
 		}
 		return f;
 	}
 
 	private void checkIndictorVect(double[] x) {
-
 		if (x == null || x.length != n) {
-			System.out.println("Kulldorff gradient error : Invalid parameters ...");
-			System.exit(0);
+			Utils.error("Kulldorff gradient error : Invalid parameters ...", 0);
 		}
 		/** make sure x is an indicator vector */
 		for (int i = 0; i < n; i++) {
-			if ( x[i] < 0.0D || x[i] > 1.0D ) {
-				System.out.println("x[i] should be in [0,1], but it is "+x[i]);
-				System.exit(0);
+			if (x[i] < 0.0D || x[i] > 1.0D) {
+				Utils.error("x[i] should be in [0,1], but it is " + x[i], 0);
 			}
 		}
 	}
 
 	/**
-	 * To do minimization, or maximization TODO
+	 * To do maximization
 	 */
 	@Override
 	public double[] getArgMaxFx(ArrayList<Integer> S) {
@@ -162,47 +164,6 @@ public class EBPStat implements Function {
 		for (int index : indexes) {
 			sortedS.add(S.get(index));
 		}
-		double maxF = -Double.MAX_VALUE;
-		double[] argMaxX = null;
-		for (int k = 1; k <= sortedS.size(); k++) {
-			List<Integer> Rk = sortedS.subList(0, k);
-			double[] x = new double[n];
-			for (int i = 0; i < n; i++) {
-				x[i] = 0.0D;
-			}
-			for (int index : Rk) {
-				x[index] = 1.0D;
-			}
-			double fk = getFuncValue(x);
-			if (fk > maxF) {
-				maxF = fk;
-				argMaxX = x;
-			}
-		}
-		result = argMaxX;
-		return result;
-	}
-
-	public double[] testGetArgMinFx() {
-		ArrayList<Integer> S = new ArrayList<Integer>();
-		S.add(1);
-		S.add(2);
-		S.add(3);
-		S.add(4);
-		double[] result = new double[4];
-		Double[] vectorRatioCB = new Double[S.size()];
-		vectorRatioCB = new Double[] { 0.2, 0.4, 0.1, 0.3 };
-		ArrayIndexComparator arrayIndexComparator = new ArrayIndexComparator(vectorRatioCB);
-		Integer[] indexes = arrayIndexComparator.indexes;
-		Arrays.sort(indexes, arrayIndexComparator);
-		ArrayList<Integer> sortedS = new ArrayList<Integer>(); // v_1,v_2,...,v_m
-		for (int index : indexes) {
-			sortedS.add(S.get(index));
-		}
-		System.out.println("indexes: " + Arrays.toString(indexes));
-		System.out.println("vectorRatioCB: " + Arrays.toString(vectorRatioCB));
-		System.out.println("soredS: " + sortedS.toString());
-		Utils.stop();
 		double maxF = -Double.MAX_VALUE;
 		double[] argMaxX = null;
 		for (int k = 1; k <= sortedS.size(); k++) {
@@ -266,11 +227,8 @@ public class EBPStat implements Function {
 		return grad;
 	}
 
-	public static void main(String args[]) {
-
-		double[] b = new double[] { 1.0D };
-		double[] c = new double[] { 1.0D };
-		EBPStat ebp = new EBPStat(b, c);
-		ebp.testGetArgMinFx();
+	public int getSize() {
+		return n;
 	}
+
 }

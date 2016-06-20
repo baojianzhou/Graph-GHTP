@@ -18,30 +18,20 @@ import java.util.*;
  *
  * @author Baojian
  */
-public class PCSFTail {
+public class TailApprox {
 
 	/** Graph G is split into 3 parts edges, edgeCosts, and prizesPi. */
-	/**
-	 * represents graph G
-	 */
+	/** represents graph G */
 	private final ArrayList<Integer[]> edges;
-	/**
-	 * edge costs c(e) (in algorithm 1 c(e) = w(e) + B / s).
-	 */
+	/** edge costs c(e) (in algorithm 1 c(e) = w(e) + B / s). */
 	private final ArrayList<Double> edgeCostsc;
-	/**
-	 * node prizes pi
-	 */
+	/** node prizes pi */
 	private final ArrayList<Double> prizesPi;
 	private final double C;
 	private final double nu;
-	/**
-	 * delta
-	 */
+	/** delta */
 	private final double delta;
-	/**
-	 * g (number of active clusters in PCST's forest)
-	 */
+	/** g (number of active clusters in PCST's forest) */
 	private final int g; // 7.
 
 	private int[] trueSubGraph;
@@ -69,7 +59,7 @@ public class PCSFTail {
 	 * @param delta
 	 *            // constant parameter delta
 	 */
-	public PCSFTail(ArrayList<Integer[]> edges, ArrayList<Double> edgeCostsc, ArrayList<Double> prizesPi, int g,
+	public TailApprox(ArrayList<Integer[]> edges, ArrayList<Double> edgeCostsc, ArrayList<Double> prizesPi, int g,
 			double costBudgetC, double nu, double delta) {
 
 		this.edges = edges;
@@ -126,7 +116,7 @@ public class PCSFTail {
 	 * @param g
 	 * @param B
 	 */
-	public PCSFTail(ArrayList<Integer[]> edges, ArrayList<Double> edgeCostsW, double[] z, int s, int g, double B,
+	public TailApprox(ArrayList<Integer[]> edges, ArrayList<Double> edgeCostsW, double[] z, int s, int g, double B,
 			int[] trueSubGraph) {
 
 		this.trueSubGraph = trueSubGraph;

@@ -1,7 +1,7 @@
 package edu.albany.cs.fastPCST;
 
-import edu.albany.cs.headApprox.PCSFHead;
-import edu.albany.cs.headApprox.PCSFHead.F;
+import edu.albany.cs.headApprox.HeadApprox;
+import edu.albany.cs.headApprox.HeadApprox.F;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class FastPCSF {
         for (int i = 0; i < pi.size(); i++) {
             totalPrizes += pi.get(i);
         }
-        PCSFHead pcsfHead = new PCSFHead();
+        HeadApprox pcsfHead = new HeadApprox();
         f = pcsfHead.new F(resultNodes, subTreeEdges, subTreeCosts, prizePi, totalPrizes);
     }
 

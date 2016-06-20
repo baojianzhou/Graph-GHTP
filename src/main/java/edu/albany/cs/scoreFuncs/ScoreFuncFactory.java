@@ -1,5 +1,11 @@
 package edu.albany.cs.scoreFuncs;
 
+/**
+ * score function factory for EBP EMS and Kulldorff statistics
+ * 
+ * @author baojian
+ *
+ */
 public class ScoreFuncFactory {
 
 	public static Function getFunc(FuncType funcID, double[] b, double[] c) {

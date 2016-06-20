@@ -1,6 +1,7 @@
 package edu.albany.cs.scoreFuncs;
 
 import edu.albany.cs.base.ArrayIndexComparator;
+import edu.albany.cs.base.Utils;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.stat.StatUtils;
@@ -10,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author baojian bzhou6@albany.edu
+ *
+ */
 public class KulldorffStat implements Function {
 
 	private final double[] b;
@@ -19,14 +24,17 @@ public class KulldorffStat implements Function {
 	private final FuncType funcID;
 	private final int n;
 
-	private int verboseLevel = 0;
-
+	/**
+	 * @param b
+	 *            base
+	 * @param c
+	 *            data (e.g. counts)
+	 */
 	public KulldorffStat(double[] b, double[] c) {
 
 		this.funcID = FuncType.Kulldorff;
 		if (!checkInput(b, c)) {
-			System.out.println(funcID + " input parameter is invalid.");
-			System.exit(0);
+			Utils.error(funcID + " input parameter is invalid.", 0);
 		}
 		this.b = b;
 		this.c = c;
@@ -69,43 +77,29 @@ public class KulldorffStat implements Function {
 		double[] gradient = new double[n];
 		double B = new ArrayRealVector(x).dotProduct(new ArrayRealVector(b));
 		double C = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
-		if (verboseLevel > 0) {
-			System.out.println("CAll: " + CAll + " ; BAll: " + BAll + " ; sum of x: " + StatUtils.sum(x));
-			System.out.println("B: " + B + "C: " + C);
-			System.out.println("(BAll - B): " + (BAll - B) + " ;(CAll-C): " + (CAll - C));
-		}
 		if ((C / B) > (CAll / BAll)) {
 			for (int i = 0; i < n; i++) {
 				double item1 = c[i] * (Math.log(C / B) + Math.log((BAll - B) / (CAll - C)));
 				double item2 = b[i] * ((CAll - C) / (BAll - B) - C / B);
 				gradient[i] = item1 + item2;
-				
 				if (!Double.isFinite(gradient[i])) {
-					System.out.println(gradient[i]);
-					System.out.println("gradient error in kulldorff stat");
-					System.exit(0);
+					Utils.error("gradient error in kulldorff stat", 0);
 				}
 			}
 		} else {
 			Arrays.fill(gradient, 0.0D);
-			if (verboseLevel > 0) {
-				System.out.println("gradient is 0 ...");
-			}
 		}
 		return gradient;
 	}
 
 	private void checkIndictorVect(double[] x) {
-
 		if (x == null || x.length != n) {
-			System.out.println("Kulldorff gradient error : Invalid parameters ...");
-			System.exit(0);
+			Utils.error("Kulldorff gradient error : Invalid parameters ...", 0);
 		}
 		/** make sure x is an indicator vector */
 		for (int i = 0; i < n; i++) {
 			if (x[i] < 0.0D || x[i] > 1.0D) {
-				System.out.println("x[i] should be in [0,1], but it is " + x[i]);
-				System.exit(0);
+				Utils.error("x[i] should be in [0,1], but it is " + x[i], 0);
 			}
 		}
 	}
@@ -119,48 +113,19 @@ public class KulldorffStat implements Function {
 		checkIndictorVect(x);
 		double B = new ArrayRealVector(x).dotProduct(new ArrayRealVector(b));
 		double C = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
-		if (verboseLevel > 0) {
-			System.out.println("BAll is : " + BAll + " ; CAll is : " + CAll + " ; X is : " + StatUtils.sum(x));
-			System.out.println("B is : " + B + " ; C is : " + C);
-			System.out.println("BAll - B is : " + (BAll - B) + " ; CAll - C is : " + (CAll - C));
-		}
 		double item1 = calXlogXA(C, B);
 		double item2 = calXlogXA(CAll - C, BAll - B);
 		double item3 = calXlogXA(CAll, BAll);
-		;
 		double f = 0.0D;
 		if ((C / B) > (CAll / BAll)) {
 			f = item1 + item2 - item3;
-			if (verboseLevel > 0) {
-				System.out.println("B: " + B);
-				System.out.println("C: " + C);
-				System.out.println("CAll: " + CAll);
-				System.out.println("BAll: " + BAll);
-				System.out.println("C / B: " + (C / B));
-				System.out.println("CAll / BAll: " + (CAll / BAll));
-			}
 			if (!Double.isFinite(f)) {
-				System.out.println("B: " + B);
-				System.out.println("C: " + C);
-				System.out.println("CAll: " + CAll);
-				System.out.println("BAll: " + BAll);
-				System.out.println("Error : Kulldorff value f is " + f);
-				System.exit(0);
+				Utils.error(0, "B: " + B, "C: " + C, "CAll: " + CAll, "BAll: " + BAll, "Kulldorff value f is " + f);
 			}
 		} else {
-			if (verboseLevel > 0) {
-				System.out.println("funcVal something is bad ...");
-				System.out.println("C / B: " + C / B);
-				System.out.println("CAll / BAll: " + CAll / BAll);
-			}
+			f = 0.0D;
 		}
 		return f;
-	}
-	
-	public double getRatio(double[] x){
-		double B = new ArrayRealVector(x).dotProduct(new ArrayRealVector(b));
-		double C = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
-		return C / B ;
 	}
 
 	/**
@@ -171,16 +136,14 @@ public class KulldorffStat implements Function {
 			return 0.0D;
 		} else {
 			if (a <= 0.0D) {
-				System.out.println("function xlog(x/a) is error");
-				System.exit(0);
+				Utils.error("function xlog(x/a) is error", 0);
 			}
 			return x * Math.log(x / a);
 		}
 	}
 
-	/** TODO maximize or minimize */
+	/** maximization of statistic function */
 	public double[] getArgMaxFx(ArrayList<Integer> S) {
-
 		double[] result = new double[n];
 		Double[] vectorRatioCB = new Double[S.size()];
 		for (int i = 0; i < S.size(); i++) {
@@ -189,7 +152,8 @@ public class KulldorffStat implements Function {
 		ArrayIndexComparator arrayIndexComparator = new ArrayIndexComparator(vectorRatioCB);
 		Integer[] indexes = arrayIndexComparator.indexes;
 		Arrays.sort(indexes, arrayIndexComparator);
-		ArrayList<Integer> sortedS = new ArrayList<Integer>(); // v_1,v_2,...,v_m
+		/** v_1,v_2,...,v_m */
+		ArrayList<Integer> sortedS = new ArrayList<Integer>();
 		for (int index : indexes) {
 			sortedS.add(S.get(index));
 		}

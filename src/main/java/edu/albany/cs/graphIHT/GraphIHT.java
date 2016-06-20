@@ -2,9 +2,9 @@ package edu.albany.cs.graphIHT;
 
 import edu.albany.cs.base.ConnectedComponents;
 import edu.albany.cs.base.PreRec;
-import edu.albany.cs.headApprox.PCSFHead;
+import edu.albany.cs.headApprox.HeadApprox;
 import edu.albany.cs.scoreFuncs.Function;
-import edu.albany.cs.tailApprox.PCSFTail;
+import edu.albany.cs.tailApprox.TailApprox;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.stat.StatUtils;
@@ -97,13 +97,13 @@ public class GraphIHT {
 			/** TODO check this further */
 			gradientFxi = normalizeGradient(xi.toArray(), gradientFxi);
 			/** head approximation */
-			PCSFHead pcsfHead = new PCSFHead(edges, edgeCosts, gradientFxi, s, g, B, trueSubGraph);
+			HeadApprox pcsfHead = new HeadApprox(edges, edgeCosts, gradientFxi, s, g, B, trueSubGraph);
 			/** get head projection vector. */
 			ArrayRealVector projectedHeader = projectVector(gradientFxi, pcsfHead.bestForest.nodesInF);
 			/** get yi */
 			ArrayRealVector yi = (new ArrayRealVector(xi)).add(projectedHeader.mapMultiply(eta));
 			/** tail approximation */
-			PCSFTail pcsfTail = new PCSFTail(edges, edgeCosts, yi.toArray(), s, g, B, trueSubGraph);
+			TailApprox pcsfTail = new TailApprox(edges, edgeCosts, yi.toArray(), s, g, B, trueSubGraph);
 			/** get x_{i+1} */
 			xi = projectVector(yi.toArray(), pcsfTail.bestForest.nodesInF);
 			xi = normalize(xi);

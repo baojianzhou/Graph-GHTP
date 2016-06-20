@@ -1,6 +1,7 @@
 package edu.albany.cs.scoreFuncs;
 
 import edu.albany.cs.base.ArrayIndexComparator;
+import edu.albany.cs.base.Utils;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.stat.StatUtils;
@@ -10,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author baojian bzhou6@albany.edu
+ *
+ */
 public class EMSStat implements Function {
 
 	private final double[] b;
@@ -21,7 +26,7 @@ public class EMSStat implements Function {
 	public EMSStat(double[] b, double[] c) {
 		funcID = FuncType.EMS;
 		if (!checkInput(b, c)) {
-			System.out.println(funcID + " input parameter is invalid.");
+			Utils.error("EMS func error. Input parameter is invalid.", 0);
 		}
 		this.b = b;
 		this.c = c;
@@ -29,7 +34,6 @@ public class EMSStat implements Function {
 	}
 
 	private boolean checkInput(double[] b, double c[]) {
-
 		if (b == null || c == null) {
 			return false;
 		} else {
@@ -52,13 +56,10 @@ public class EMSStat implements Function {
 		double[] gradient = new double[n];
 		double sigmaX = StatUtils.sum(x);
 		if (sigmaX == 0.0D) {
-			System.out.println(funcID + " Error : the denominator should not be zero.");
-			System.exit(0);
+			Utils.error("EMS func Value error. The denominator should not be zero.", 0);
 		}
 		double sigmaCX = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
 		for (int i = 0; i < gradient.length; i++) {
-			// gradient[i] = c[i] * (Math.sqrt(sigmaX) / sigmaX) - (0.5D) *
-			// (sigmaCX / Math.pow(sigmaX, 1.5D));
 			gradient[i] = c[i] * (Math.sqrt(sigmaX) / sigmaX) - (0.5D) * (sigmaCX / Math.pow(sigmaX, 1.5D));
 		}
 		return gradient;
@@ -75,16 +76,13 @@ public class EMSStat implements Function {
 		double sigmaX = StatUtils.sum(x);
 		double sigmaCX = new ArrayRealVector(x).dotProduct(new ArrayRealVector(c));
 		if (sigmaX <= 0.0D) {
-			System.out.println("funcValue error ...");
-			System.exit(0);
+			Utils.error("EMS func Value error ...", 0);
 		} else {
 			funcValue = sigmaCX / Math.sqrt(sigmaX);
 		}
 		if (!Double.isFinite(funcValue)) {
-			System.out.println(funcID + " Error : elevated mean scan stat is not a real value, f is " + funcValue);
-			System.exit(0);
+			Utils.error("EMS func Value is not a real value, f is " + funcValue, 0);
 		}
-
 		return funcValue;
 	}
 
