@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.graphIHT.GraphIHT;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
@@ -22,8 +23,7 @@ public class TestGraphIHTOnCitHep {
 	private final int numOfThreads;
 	private final FuncType[] funcs;
 
-	private final String citHepPhFolder = "data/CitHepPh/testGraph";
-	private final String resultFileName = "./output/CitHepPh/graph_IHT_CitHepPh_Single.txt";
+	private final String resultFileName = Constants.CitHepPhOutputFolder + "graphIHT_CitHepPh_Single.txt";
 
 	private int verboseLevel = 0;
 
@@ -35,13 +35,10 @@ public class TestGraphIHTOnCitHep {
 
 	private void run() {
 
-		if (!new File("./output/CitHepPh/").isDirectory()) {
-			new File("./output/CitHepPh/").mkdir();
-		}
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
-		for (final File apdmFile : new File(citHepPhFolder).listFiles()) {
-			
+		for (final File apdmFile : new File(Constants.CitHepPhDataFolder).listFiles()) {
+
 			final APDMInputFormat apdm = new APDMInputFormat(apdmFile);
 			final int graphSize = apdm.data.numNodes;
 			final ArrayList<Integer[]> edges = apdm.data.intEdges;
@@ -90,7 +87,7 @@ public class TestGraphIHTOnCitHep {
 							double B = s - 1 + 0.0D;
 							GraphIHT graphIHT = new GraphIHT(graphSize, edges, edgeCosts, apdm.data.counts, s, g, B,
 									false, trueSubGraph, func);
-							System.out.println("fValues: "+graphIHT.fValues.toString());
+							System.out.println("fValues: " + graphIHT.fValues.toString());
 							if (bestFuncValue < graphIHT.funcValueTail) {
 								bestFuncValue = graphIHT.funcValueTail;
 								bestGraphIHT = graphIHT;
@@ -124,15 +121,9 @@ public class TestGraphIHTOnCitHep {
 		pool.shutdown();
 	}
 
-	public String[] getBWSNFilePathList() {
-		String[] allFilePaths = null;
-		for (File file : new File(citHepPhFolder).listFiles()) {
-			allFilePaths = ArrayUtils.add(allFilePaths, citHepPhFolder + "/" + file.getName());
-		}
-		return allFilePaths;
-	}
-
 	public static void main(String args[]) {
+		
+		Constants.intializeProject();
 		if (args == null || args.length == 0) {
 			int numOfThreads = 3;
 			new TestGraphIHTOnCitHep(numOfThreads);

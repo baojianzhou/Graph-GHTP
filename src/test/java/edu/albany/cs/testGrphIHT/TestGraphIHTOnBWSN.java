@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.base.PreRec;
 import edu.albany.cs.graphIHT.GraphIHT;
 import edu.albany.cs.scoreFuncs.FuncType;
@@ -19,31 +20,24 @@ import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
 
 public class TestGraphIHTOnBWSN {
-	
-	//the base of kulldorff is the maximal value of citations
+
+	// the base of kulldorff is the maximal value of citations
 
 	private final int numOfThreads;
-	private final FuncType[] funcs;
-
-	private final String BWSNDataFolder = "data/BWSN/source_12500";
-	private final String resultFileName = "./output/BWSN/graph_IHT_BWSN_Result_Updated.txt";
+	private final String resultFileName = Constants.BWSNOutputFolder + "graph_IHT_BWSN_Result_Updated.txt";
 
 	private int verboseLevel = 0;
 
 	public TestGraphIHTOnBWSN(int numOfThreads) {
 		this.numOfThreads = numOfThreads;
-		this.funcs = new FuncType[] { FuncType.Kulldorff};
 		run();
 	}
 
 	private void run() {
 
-		if (!new File("./output/BWSN/").isDirectory()) {
-			new File("./output/BWSN/").mkdir();
-		}
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
-		for (final File apdmFile : new File(BWSNDataFolder).listFiles()) {
+		for (final File apdmFile : new File(Constants.BWSNDataFolder).listFiles()) {
 
 			final APDMInputFormat apdm = new APDMInputFormat(apdmFile);
 			final int graphSize = apdm.data.numNodes;
@@ -51,7 +45,7 @@ public class TestGraphIHTOnBWSN {
 			final ArrayList<Double> edgeCosts = apdm.data.identityEdgeCosts;
 			final double noiseLevel = Double.parseDouble(apdmFile.getName().split("_")[5].split(".txt")[0]) / 100.0D;
 
-			for (final FuncType funcID : funcs) {
+			for (final FuncType funcID : Constants.funcs) {
 
 				pool.execute(new Thread() {
 					public void run() {
@@ -103,13 +97,13 @@ public class TestGraphIHTOnBWSN {
 								bestGraphIHT = graphIHT;
 								bestFuncs = ArrayUtils.add(bestFuncs, bestFuncValue);
 								if (verboseLevel == 0) {
-									PreRec preRec = new PreRec(graphIHT.resultNodesTail,trueSubGraph);
+									PreRec preRec = new PreRec(graphIHT.resultNodesTail, trueSubGraph);
 									System.out.println(preRec.toString());
 									System.out.println("function Value is: " + bestFuncValue);
 								}
 							} else {
 								if (verboseLevel == 0) {
-									PreRec preRec = new PreRec(graphIHT.resultNodesTail,trueSubGraph);
+									PreRec preRec = new PreRec(graphIHT.resultNodesTail, trueSubGraph);
 									System.out.println(preRec.toString());
 									System.out.println("function Value is: " + bestFuncValue);
 								}
@@ -150,17 +144,11 @@ public class TestGraphIHTOnBWSN {
 		pool.shutdown();
 	}
 
-	public String[] getBWSNFilePathList() {
-		String[] allFilePaths = null;
-		for (File file : new File(BWSNDataFolder).listFiles()) {
-			allFilePaths = ArrayUtils.add(allFilePaths, BWSNDataFolder + "/" + file.getName());
-		}
-		return allFilePaths;
-	}
-
 	public static void main(String args[]) {
+		
+		Constants.intializeProject();
 		if (args == null || args.length == 0) {
-			int numOfThreads = 5;
+			int numOfThreads = 1;
 			new TestGraphIHTOnBWSN(numOfThreads);
 		} else {
 			int numOfThreads = Integer.parseInt(args[0]);

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.base.Stat;
 import edu.albany.cs.base.Utils;
 import edu.albany.cs.graphGHTP.GraphGHTP;
@@ -20,12 +21,11 @@ import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
 
 public class TestGraphGHTPONCrimeOfChicago {
+	
 	private final int numOfThreads;
 	private final FuncType[] funcs;
 
-	private final String citHepPhDataFolder = "data/CrimeOfChicago/graph/";
-	private final String resultFolder = "./output/CrimeOfChicago/";
-	private final String resultFileName = resultFolder + "graph_GHTP_CrimeOfChicago_Result.txt";
+	private final String resultFileName = Constants.ChicagoCrimeOutputFolder + "graph_GHTP_CrimeOfChicago_Result.txt";
 
 	private int verboseLevel = 0;
 
@@ -37,12 +37,9 @@ public class TestGraphGHTPONCrimeOfChicago {
 
 	private void run() {
 
-		if (!new File(resultFolder).isDirectory()) {
-			new File(resultFolder).mkdir();
-		}
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
-		for (final File apdmFile : new File(citHepPhDataFolder).listFiles()) {
+		for (final File apdmFile : new File(Constants.ChicagoCrimeDataFolder).listFiles()) {
 
 			final APDMInputFormat apdm = new APDMInputFormat(apdmFile);
 			final int graphSize = apdm.data.numNodes;
@@ -270,7 +267,8 @@ public class TestGraphGHTPONCrimeOfChicago {
 	}
 
 	public static void main(String args[]) {
-
+		
+		Constants.intializeProject();
 		if (args == null || args.length == 0) {
 			int numOfThreads = 1;
 			new TestGraphGHTPONCrimeOfChicago(numOfThreads);

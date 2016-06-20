@@ -12,6 +12,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.base.PreRec;
 import edu.albany.cs.base.Utils;
 import edu.albany.cs.graphGHTP.GraphGHTP;
@@ -20,39 +21,30 @@ import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
 
 public class TestGraphGHTPONBWSN {
+
 	private final int numOfThreads;
-	private final FuncType[] funcs;
-	private final String waterNetworkDataFolder = "data/BWSN/source_12500";
-	private final String resultFileName = "./output/BWSN/graph_GHTP_BWSN_Result.txt";
+	private final String resultFileName = Constants.BWSNOutputFolder + "graph_GHTP_BWSN_Result.txt";
 
 	private int verboseLevel = 0;
 
 	public TestGraphGHTPONBWSN(int numOfThreads) {
 		this.numOfThreads = numOfThreads;
-		this.funcs = new FuncType[] { FuncType.Kulldorff, FuncType.EMS, FuncType.EBP };
 		run();
 	}
 
 	private void run() {
 
-		if (!new File("./output/BWSN/").isDirectory()) {
-			new File("./output/BWSN/").mkdir();
-		}
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
-		for (final File apdmFile : new File(waterNetworkDataFolder).listFiles()) {
+		for (final File apdmFile : new File(Constants.BWSNDataFolder).listFiles()) {
 
 			final APDMInputFormat apdm = new APDMInputFormat(apdmFile);
 			final int graphSize = apdm.data.numNodes;
 			final ArrayList<Integer[]> edges = apdm.data.intEdges;
 			final ArrayList<Double> edgeCosts = apdm.data.identityEdgeCosts;
-			if (verboseLevel > 0) {
-				if (!apdmFile.getName().equals("APDM-Water-source-12500_time_03_hour_noise_4.txt")) {
-					continue;
-				}
-			}
 			final double noiseLevel = Double.parseDouble(apdmFile.getName().split("_")[5].split(".txt")[0]) / 100.0D;
-			for (final FuncType funcID : funcs) {
+
+			for (final FuncType funcID : Constants.funcs) {
 
 				pool.execute(new Thread() {
 					public void run() {
@@ -108,7 +100,7 @@ public class TestGraphGHTPONBWSN {
 							System.out.println("s: " + s);
 							if (verboseLevel > 0) {
 								System.out.println("-------------------------------------------------");
-								PreRec preRec = new PreRec(graphGHTP.resultNodesTail,trueSubGraph);
+								PreRec preRec = new PreRec(graphGHTP.resultNodesTail, trueSubGraph);
 								System.out.println(preRec.toString());
 								System.out.println("current function Value is: " + graphGHTP.funcValueTail);
 								System.out.println("current best function Value is: " + bestFuncValue);
@@ -175,6 +167,9 @@ public class TestGraphGHTPONBWSN {
 	}
 
 	public static void main(String args[]) {
+
+		Constants.intializeProject();
+
 		if (args == null || args.length == 0) {
 			int numOfThreads = 5;
 			new TestGraphGHTPONBWSN(numOfThreads);

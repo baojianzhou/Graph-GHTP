@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.lang3.ArrayUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.base.Stat;
 import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
@@ -21,9 +22,8 @@ import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
 public class TestGraphGHTPONTraffic {
 	private final int numOfThreads;
 
-	private final String trafficDataFolder = "data/Traffic/";
-	private final String resultFolder = "./output/Traffic/";
-	private final String resultFileName = resultFolder + "graph_GHTP_Traffic_Result.txt";
+	private final String resultFileName = Constants.TrafficOutputFolder + "graph_GHTP_Traffic_Result.txt";
+	
 	private String[] testingDates = new String[] { "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05",
 			"2014-03-06", "2014-03-07", "2014-03-08", "2014-03-09", "2014-03-10", "2014-03-11", "2014-03-12",
 			"2014-03-13", "2014-03-14", "2014-03-15", "2014-03-16", "2014-03-17", "2014-03-18", "2014-03-19",
@@ -41,13 +41,9 @@ public class TestGraphGHTPONTraffic {
 
 	private void run() {
 
-		if (!new File(resultFolder).isDirectory()) {
-			new File(resultFolder).mkdir();
-		}
-
 		String[] subFolders = new String[testingDates.length];
 		for (int i = 0; i < testingDates.length; i++) {
-			subFolders[i] = trafficDataFolder + testingDates[i];
+			subFolders[i] = Constants.TrafficDataFolder + testingDates[i];
 		}
 		for (int i = 0; i < testingDates.length; i++) {
 
@@ -139,6 +135,8 @@ public class TestGraphGHTPONTraffic {
 	}
 
 	public static void main(String args[]) {
+		
+		Constants.intializeProject();
 
 		if (args == null || args.length == 0) {
 			int numOfThreads = 3;

@@ -12,42 +12,35 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
+import edu.albany.cs.base.Constants;
 import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
 
 public class TestGraphGHTPONCitHepPh {
-	private final int numOfThreads;
-	private FuncType[] funcs;
-	private final int resultUpperBound = 20000;
 
-	private final String citHepPhDataFolder = "data/CitHepPh/testGraph/";
-	private final String resultFolder = "./output/CitHepPh/";
-	private final String resultFileName = resultFolder + "graph_GHTP_CitHepPh_Result_Updated.txt";
+	private final int numOfThreads;
+
+	private final String resultFileName = Constants.CitHepPhOutputFolder + "graph_GHTP_CitHepPh_Result_Updated.txt";
 
 	public TestGraphGHTPONCitHepPh(int numOfThreads) {
 		this.numOfThreads = numOfThreads;
-		this.funcs = new FuncType[] { FuncType.Kulldorff, FuncType.EMS, FuncType.EBP };
-		this.funcs = new FuncType[] { FuncType.EMS };
 		run();
 	}
 
 	private void run() {
 
-		if (!new File(resultFolder).isDirectory()) {
-			new File(resultFolder).mkdir();
-		}
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
-		for (final File apdmFile : new File(citHepPhDataFolder).listFiles()) {
+		for (final File apdmFile : new File(Constants.CitHepPhDataFolder).listFiles()) {
 
 			final APDMInputFormat apdm = new APDMInputFormat(apdmFile);
 			final int graphSize = apdm.data.numNodes;
 			final ArrayList<Integer[]> edges = apdm.data.intEdges;
 			final ArrayList<Double> edgeCosts = apdm.data.identityEdgeCosts;
 
-			for (final FuncType funcID : funcs) {
+			for (final FuncType funcID : Constants.funcs) {
 
 				pool.execute(new Thread() {
 					public void run() {
@@ -79,7 +72,7 @@ public class TestGraphGHTPONCitHepPh {
 								int resultSize = graphGHTP.resultNodesTail.size();
 								System.out.println("s: " + s + " ; resultSize: " + resultSize + " ; funcValue: "
 										+ graphGHTP.funcValueTail);
-								if (bestFuncValue < graphGHTP.funcValueTail && (resultSize <= resultUpperBound)) {
+								if (bestFuncValue < graphGHTP.funcValueTail ) {
 									System.out.println("result size: " + resultSize);
 									bestFuncValue = graphGHTP.funcValueTail;
 									bestGraphGHTP = graphGHTP;
@@ -115,8 +108,7 @@ public class TestGraphGHTPONCitHepPh {
 								double B = s - 1 + 0.0D;
 								GraphGHTP graphGHTP = new GraphGHTP(graphSize, edges, edgeCosts, apdm.data.counts, s, g,
 										B, false, trueSubGraph, func, true, 1.0D);
-								int resultSize = graphGHTP.resultNodesTail.size();
-								if (bestFuncValue < graphGHTP.funcValueTail && (resultSize <= resultUpperBound)) {
+								if (bestFuncValue < graphGHTP.funcValueTail ) {
 									bestFuncValue = graphGHTP.funcValueTail;
 									bestGraphGHTP = graphGHTP;
 									bestFuncs = ArrayUtils.add(bestFuncs, bestFuncValue);
@@ -154,8 +146,7 @@ public class TestGraphGHTPONCitHepPh {
 								double B = s - 1 + 0.0D;
 								GraphGHTP graphGHTP = new GraphGHTP(graphSize, edges, edgeCosts, apdm.data.counts, s, g,
 										B, false, trueSubGraph, func, true, 1.0D);
-								int resultSize = graphGHTP.resultNodesTail.size();
-								if (bestFuncValue < graphGHTP.funcValueTail && (resultSize <= resultUpperBound)) {
+								if (bestFuncValue < graphGHTP.funcValueTail ) {
 									bestFuncValue = graphGHTP.funcValueTail;
 									bestGraphGHTP = graphGHTP;
 									bestFuncs = ArrayUtils.add(bestFuncs, bestFuncValue);
@@ -189,6 +180,9 @@ public class TestGraphGHTPONCitHepPh {
 	}
 
 	public static void main(String args[]) {
+		
+		Constants.intializeProject();
+		
 		if (args == null || args.length == 0) {
 			int numOfThreads = 4;
 			new TestGraphGHTPONCitHepPh(numOfThreads);
