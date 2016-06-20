@@ -1,7 +1,7 @@
 package edu.albany.cs.graphIHT;
 
 import edu.albany.cs.base.ConnectedComponents;
-import edu.albany.cs.base.Utils;
+import edu.albany.cs.base.PreRec;
 import edu.albany.cs.headApprox.PCSFHead;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.tailApprox.PCSFTail;
@@ -69,14 +69,11 @@ public class GraphIHT {
 		this.trueSubGraph = trueSubGraph;
 		this.function = func;
 		if (checkInput()) {
-			x = run(); // run the algorithm
+			x = run();
 		} else {
 			x = null;
 			System.out.println("input parameter is invalid. ");
 			System.exit(0);
-		}
-		if (verboseLevel >= 1) {
-			printInfo();
 		}
 	}
 
@@ -97,7 +94,8 @@ public class GraphIHT {
 			iterNum++;
 			/** Gradient for the function. */
 			double[] gradientFxi = function.getGradient(xi.toArray());
-			//gradientFxi = normalizeGradient(xi.toArray(),gradientFxi);
+			/** TODO check this further */
+			gradientFxi = normalizeGradient(xi.toArray(), gradientFxi);
 			/** head approximation */
 			PCSFHead pcsfHead = new PCSFHead(edges, edgeCosts, gradientFxi, s, g, B, trueSubGraph);
 			/** get head projection vector. */
@@ -123,7 +121,7 @@ public class GraphIHT {
 		funcValueTail = getFuncTailVal(resultNodesTail);
 		return xi;
 	}
-	
+
 	private double[] normalizeGradient(double[] x, double[] gradient) {
 		double[] normalizedGradient = new double[graphSize];
 		for (int i = 0; i < graphSize; i++) {
@@ -177,8 +175,7 @@ public class GraphIHT {
 		double mean = StatUtils.mean(c);
 		double std = Math.sqrt(StatUtils.variance(c));
 		for (int i = 0; i < graphSize; i++) {
-			/** TODO initialize is dataset sensitive. */
-			if (c[i] >= mean + 2 * std) {
+			if (c[i] >= mean + 2.0D * std) {
 				abnormalNodes = ArrayUtils.add(abnormalNodes, i);
 			}
 		}
@@ -190,7 +187,8 @@ public class GraphIHT {
 			x0[largestCC[i]] = 1.0D;
 		}
 		if (verboseLevel > 0) {
-			Utils.calPreAndRec(largestCC, trueSubGraph);
+			PreRec preRec = new PreRec(largestCC, trueSubGraph);
+			System.out.println(preRec.toString());
 		}
 		return new ArrayRealVector(x0);
 	}
@@ -200,8 +198,7 @@ public class GraphIHT {
 		double mean = StatUtils.mean(c);
 		double std = Math.sqrt(StatUtils.variance(c));
 		for (int i = 0; i < graphSize; i++) {
-			/** TODO need to change further */
-			if (c[i] >= mean + std) {
+			if (c[i] >= mean + 2.0D * std) {
 				abnormalNodes = ArrayUtils.add(abnormalNodes, i);
 			}
 		}
@@ -263,6 +260,14 @@ public class GraphIHT {
 		return result;
 	}
 
+	/**
+	 * normalize a vector. if x[i] < 0.0, then x[i]:= 0.0 if x[i] > 1.0, then
+	 * x[i]:= 1.0
+	 * 
+	 * @param x
+	 *            input vector
+	 * @return
+	 */
 	private ArrayRealVector normalize(ArrayRealVector x) {
 		ArrayRealVector result = new ArrayRealVector(x);
 		for (int i = 0; i < x.getDimension(); i++) {
@@ -274,15 +279,6 @@ public class GraphIHT {
 			}
 		}
 		return result;
-	}
-
-	public void printInfo() {
-		System.out.println("total iterations : " + iterNum + "\n");
-		System.out.println("trueNodes: " + Arrays.toString(trueSubGraph));
-		System.out.println("resultNodes: " + resultNodesTail.toString());
-	}
-
-	public static void main(String args[]) {
 	}
 
 }

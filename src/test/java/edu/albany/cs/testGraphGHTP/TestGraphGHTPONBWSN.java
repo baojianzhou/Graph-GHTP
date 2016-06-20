@@ -108,7 +108,8 @@ public class TestGraphGHTPONBWSN {
 							System.out.println("s: " + s);
 							if (verboseLevel > 0) {
 								System.out.println("-------------------------------------------------");
-								Utils.calPreAndRec(Utils.toArray(graphGHTP.resultNodesTail), trueSubGraph);
+								PreRec preRec = new PreRec(graphGHTP.resultNodesTail,trueSubGraph);
+								System.out.println(preRec.toString());
 								System.out.println("current function Value is: " + graphGHTP.funcValueTail);
 								System.out.println("current best function Value is: " + bestFuncValue);
 								System.out.println("running Time: " + graphGHTP.runTime);

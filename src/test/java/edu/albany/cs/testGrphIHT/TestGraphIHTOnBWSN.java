@@ -13,7 +13,6 @@ import org.apache.commons.math3.stat.StatUtils;
 
 import edu.albany.cs.base.APDMInputFormat;
 import edu.albany.cs.base.PreRec;
-import edu.albany.cs.base.Utils;
 import edu.albany.cs.graphIHT.GraphIHT;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
@@ -104,12 +103,14 @@ public class TestGraphIHTOnBWSN {
 								bestGraphIHT = graphIHT;
 								bestFuncs = ArrayUtils.add(bestFuncs, bestFuncValue);
 								if (verboseLevel == 0) {
-									Utils.calPreAndRec(Utils.toArray(graphIHT.resultNodesTail), trueSubGraph);
+									PreRec preRec = new PreRec(graphIHT.resultNodesTail,trueSubGraph);
+									System.out.println(preRec.toString());
 									System.out.println("function Value is: " + bestFuncValue);
 								}
 							} else {
 								if (verboseLevel == 0) {
-									Utils.calPreAndRec(Utils.toArray(graphIHT.resultNodesTail), trueSubGraph);
+									PreRec preRec = new PreRec(graphIHT.resultNodesTail,trueSubGraph);
+									System.out.println(preRec.toString());
 									System.out.println("function Value is: " + bestFuncValue);
 								}
 							}

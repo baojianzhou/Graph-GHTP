@@ -2,7 +2,6 @@ package edu.albany.cs.base;
 
 import edu.albany.cs.base.ConnectedComponents;
 import edu.albany.cs.base.Edge;
-import edu.albany.cs.base.Utils;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -286,7 +285,7 @@ public class APDMInputFormat {
 				if (sCurrentLine.startsWith("#")) {
 					continue;
 				}
-				// general Information
+				/** general Information*/ 
 				if (sCurrentLine.startsWith("SECTION1")) {
 					while (!(sCurrentLine = br.readLine()).equals("END")) {
 						if (sCurrentLine.startsWith("numNodes")) {
@@ -311,7 +310,7 @@ public class APDMInputFormat {
 					}
 				}
 
-				// nodes information
+				/** nodes information */
 				if (sCurrentLine.startsWith("SECTION2")) {
 					data.nodes = new HashMap<Integer, Double>();
 					data.PValue = new double[data.numNodes];
@@ -352,7 +351,7 @@ public class APDMInputFormat {
 						count++;
 					}
 				}
-				// edges information
+				/** edges information */
 				if (sCurrentLine.startsWith("SECTION3")) {
 					data.edges = new HashMap<int[], Double>();
 					data.newEdges = new ArrayList<Edge>();
@@ -376,7 +375,7 @@ public class APDMInputFormat {
 					}
 					data.identityEdgeCosts = identityEdgeCosts;
 				}
-				// trueSubGraphEdges information
+				/** trueSubGraphEdges information */
 				if (sCurrentLine.startsWith("SECTION4")) {
 					data.trueSubGraphEdges = new HashMap<int[], Double>();
 					while (!(sCurrentLine = br.readLine()).equals("END")) {
@@ -427,38 +426,6 @@ public class APDMInputFormat {
 			APDMInputFormat.generateAPDMFile("NULL", apdm.data.dataSource, apdm.data.newEdges, PValue, apdm.data.counts,
 					apdm.data.averCounts, new HashMap<int[], Double>(), "./tmp/" + file.getName());
 		}
-	}
-
-	public static void processCitHepPh(String fileName, String year) throws IOException {
-		int[] nodes = Utils.getIntFromFile("./data/citHepPh/maximum_CC_nodes.txt");
-		ArrayList<Integer> nodesID = new ArrayList<Integer>();
-		for (int i : nodes) {
-			nodesID.add(i);
-		}
-		HashMap<Integer, Double> pvalue = new HashMap<Integer, Double>();
-		HashMap<Integer, Integer> citCnts = new HashMap<Integer, Integer>();
-		pvalue = Utils.getPValueFromFile("./data/citHepPh/" + fileName);
-		citCnts = Utils.getCitCntsFromFile("./data/citHepPh/" + fileName);
-		double[] PValue = new double[nodesID.size()];
-		double[] counts = new double[nodesID.size()];
-		double[] average = new double[nodesID.size()];
-		for (int i = 0; i < average.length; i++) {
-			average[i] = 2.391845;
-		}
-		for (int i = 0; i < PValue.length; i++) {
-			PValue[i] = pvalue.get(nodesID.get(i));
-			counts[i] = citCnts.get(nodesID.get(i));
-		}
-		ArrayList<Integer[]> edges = Utils.getGraphEdgeFromFile("data/citHepPh/edges.txt", " ");
-		ArrayList<Edge> Edges = new ArrayList<Edge>();
-		int count = 0;
-		for (Integer[] edge : edges) {
-			Edges.add(new Edge(nodesID.indexOf(edge[0]), nodesID.indexOf(edge[1]), count++, 1.0D));
-		}
-		// APDMInputFormat.generateAPDMFile("NULL", "citHepPh", Edges, PValue,
-		// "./realDataSet/citHepPh/APDM-Graph-CitHepPh-2002-11895.txt") ;
-		APDMInputFormat.generateAPDMFile("NULL", "citHepPh", Edges, PValue, counts, average,
-				new HashMap<int[], Double>(), "./data/citHepPh/APDM-Graph-CitHepPh-" + year + "-11895.txt");
 	}
 
 }
