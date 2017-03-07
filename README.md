@@ -13,11 +13,11 @@ Need to be installed:
 ## How to run the code ?
 #### Step-1: download the code using the following command:
 ```shell
-git clone https://github.com/baojianzhou/Graph-MP.git
+git clone https://github.com/baojianzhou/Graph-GHTP.git
 ```
 #### Step-2: go into the folder path/to/Graph-MP.
 ```shell
-cd path/to/Graph-MP
+cd path/to/Graph-GHTP
 ```
 #### Step-3: compile the code under Java 1.8
 ```shell
