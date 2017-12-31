@@ -24,7 +24,7 @@ public final class Constants {
 	/** data folder */
 	public static final String BWSNDataFolder = "./data/BWSN/testGraphs";
 	public static final String CitHepPhDataFolder = "./data/CitHepPh/testGraphs";
-	public static final String TrafficDataFolder = "./data/Traffic/testGraphs";
+	public static final String TrafficDataFolder = "./data/Traffic/testGraphs/";
 	public static final String ChicagoCrimeDataFolder = "./data/ChicagoCrime/testGraphs";
 
 	/** result folder */
