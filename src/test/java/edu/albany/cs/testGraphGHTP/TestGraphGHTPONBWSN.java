@@ -19,20 +19,15 @@ import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
+import org.junit.Test;
 
 public class TestGraphGHTPONBWSN {
 
-	private final int numOfThreads;
 	private final String resultFileName = Constants.BWSNOutputFolder + "graph_GHTP_BWSN_Result.txt";
 
 	private int verboseLevel = 0;
 
-	public TestGraphGHTPONBWSN(int numOfThreads) {
-		this.numOfThreads = numOfThreads;
-		run();
-	}
-
-	private void run() {
+	private void run(int numOfThreads) {
 
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
@@ -166,17 +161,11 @@ public class TestGraphGHTPONBWSN {
 		pool.shutdown();
 	}
 
-	public static void main(String args[]) {
-
+	@Test
+	public void runTest() {
 		Constants.intializeProject();
-
-		if (args == null || args.length == 0) {
-			int numOfThreads = 5;
-			new TestGraphGHTPONBWSN(numOfThreads);
-		} else {
-			int numOfThreads = Integer.parseInt(args[0]);
-			new TestGraphGHTPONBWSN(numOfThreads);
-		}
+		int numOfThreads = 5;
+		run(numOfThreads);
 	}
 
 }
