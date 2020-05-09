@@ -260,7 +260,7 @@ public class TestGraphGHTPONCrimeOfChicago {
 	}
 
 	@Test
-	public void runTest(String args[]) {
+	public void runTest() {
 		
 		Constants.intializeProject();
 		int numOfThreads = 1;
