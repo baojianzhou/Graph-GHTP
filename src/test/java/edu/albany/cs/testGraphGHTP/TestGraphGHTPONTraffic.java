@@ -18,28 +18,15 @@ import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
+import org.junit.Test;
 
 public class TestGraphGHTPONTraffic {
-	private final int numOfThreads;
 
 	private final String resultFileName = Constants.TrafficOutputFolder + "graph_GHTP_Traffic_Result.txt";
-	
-	private String[] testingDates = new String[] { "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05",
-			"2014-03-06", "2014-03-07", "2014-03-08", "2014-03-09", "2014-03-10", "2014-03-11", "2014-03-12",
-			"2014-03-13", "2014-03-14", "2014-03-15", "2014-03-16", "2014-03-17", "2014-03-18", "2014-03-19",
-			"2014-03-20", "2014-03-21", "2014-03-22", "2014-03-23", "2014-03-24", "2014-03-25", "2014-03-26",
-			"2014-03-27", "2014-03-28", "2014-03-29", "2014-03-30", "2014-03-31", };
 
 	private int verboseLevel = 0;
 
-	public TestGraphGHTPONTraffic(int numOfThreads) {
-		testingDates = new String[] { "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05",
-				"2014-03-06", };
-		this.numOfThreads = numOfThreads;
-		run();
-	}
-
-	private void run() {
+	private void run(int numOfThreads, String[] testingDates) {
 
 		String[] subFolders = new String[testingDates.length];
 		for (int i = 0; i < testingDates.length; i++) {
@@ -134,17 +121,13 @@ public class TestGraphGHTPONTraffic {
 		}
 	}
 
-	public static void main(String args[]) {
+	@Test
+	public void runTest() {
 		
 		Constants.intializeProject();
-
-		if (args == null || args.length == 0) {
-			int numOfThreads = 3;
-			new TestGraphGHTPONTraffic(numOfThreads);
-		} else {
-			int numOfThreads = Integer.parseInt(args[0]);
-			new TestGraphGHTPONTraffic(numOfThreads);
-		}
+		int numOfThreads = 3;
+		run(numOfThreads, new String[] { "2014-03-01", "2014-03-02", "2014-03-03", "2014-03-04", "2014-03-05",
+				"2014-03-06", });
 	}
 
 }

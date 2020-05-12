@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,23 +20,15 @@ import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
+import org.junit.Test;
 
 public class TestGraphGHTPONCrimeOfChicago {
-	
-	private final int numOfThreads;
-	private final FuncType[] funcs;
 
 	private final String resultFileName = Constants.ChicagoCrimeOutputFolder + "graph_GHTP_CrimeOfChicago_Result.txt";
 
 	private int verboseLevel = 0;
 
-	public TestGraphGHTPONCrimeOfChicago(int numOfThreads) {
-		this.numOfThreads = numOfThreads;
-		this.funcs = new FuncType[] { FuncType.EBP, FuncType.EMS, FuncType.Kulldorff, };
-		run();
-	}
-
-	private void run() {
+	private void run(int numOfThreads, FuncType[] funcs) {
 
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
@@ -266,16 +259,12 @@ public class TestGraphGHTPONCrimeOfChicago {
 		Utils.stop();
 	}
 
-	public static void main(String args[]) {
+	@Test
+	public void runTest() {
 		
 		Constants.intializeProject();
-		if (args == null || args.length == 0) {
-			int numOfThreads = 1;
-			new TestGraphGHTPONCrimeOfChicago(numOfThreads);
-		} else {
-			int numOfThreads = Integer.parseInt(args[0]);
-			new TestGraphGHTPONCrimeOfChicago(numOfThreads);
-		}
+		int numOfThreads = 1;
+		run(numOfThreads, new FuncType[] { FuncType.EBP, FuncType.EMS, FuncType.Kulldorff, });
 	}
 
 }

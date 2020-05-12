@@ -17,19 +17,14 @@ import edu.albany.cs.graphGHTP.GraphGHTP;
 import edu.albany.cs.scoreFuncs.FuncType;
 import edu.albany.cs.scoreFuncs.Function;
 import edu.albany.cs.scoreFuncs.ScoreFuncFactory;
+import org.junit.Test;
 
 public class TestGraphGHTPONCitHepPh {
 
-	private final int numOfThreads;
-
 	private final String resultFileName = Constants.CitHepPhOutputFolder + "graph_GHTP_CitHepPh_Result_Updated.txt";
 
-	public TestGraphGHTPONCitHepPh(int numOfThreads) {
-		this.numOfThreads = numOfThreads;
-		run();
-	}
 
-	private void run() {
+	private void run(int numOfThreads) {
 
 		ExecutorService pool = Executors.newFixedThreadPool(numOfThreads);
 
@@ -179,17 +174,12 @@ public class TestGraphGHTPONCitHepPh {
 		pool.shutdown();
 	}
 
-	public static void main(String args[]) {
+	@Test
+	public void runTest() {
 		
 		Constants.intializeProject();
-		
-		if (args == null || args.length == 0) {
-			int numOfThreads = 4;
-			new TestGraphGHTPONCitHepPh(numOfThreads);
-		} else {
-			int numOfThreads = Integer.parseInt(args[0]);
-			new TestGraphGHTPONCitHepPh(numOfThreads);
-		}
+		int numOfThreads = 4;
+		run(numOfThreads);
 	}
 
 }
